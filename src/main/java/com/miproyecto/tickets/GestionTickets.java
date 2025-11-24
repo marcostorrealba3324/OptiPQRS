@@ -66,13 +66,13 @@ public class GestionTickets {
         System.out.println("En 15 días hábiles se le estará respondiendo a su solicitud.\n");
 
 
-        guardarTicket(ticketID, cedula, nombre + " " + apellido, tipoTexto, descripcion, fecha);
+        guardarTicket(ticketID, cedula, nombre + " " + apellido, tipoTexto, descripcion, fecha, estado);
     }
 
 
     public static void guardarTicket(String id, String cedula, String nombre, String tipo, String descripcion, String fecha) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("tickets/tickets.txt", true))) {
-            bw.write(id + "," + cedula + "," + nombre + "," + tipo + "," + descripcion + "," + fecha);
+            bw.write(id + "," + cedula + "," + nombre + "," + tipo + "," + descripcion + "," + fecha + ",NO RESPONDIDO");
             bw.newLine();
         } catch (IOException e) {
             System.out.println("Error al guardar el ticket.");
@@ -114,6 +114,7 @@ public static void mostrarTodosLosTickets() {
                 System.out.println("Tipo: " + partes[3]);
                 System.out.println("Descripción: " + partes[4]);
                 System.out.println("Fecha: " + partes[5]);
+                System.out.println("Estado: " + partes[6]);
                 System.out.println("-----------------------------");
             }
         }
@@ -133,4 +134,38 @@ public static void mostrarTodosLosTickets() {
             System.out.println("No se pudieron eliminar los tickets o no existen.");
         }
     }
+    public static void responderTicket(String ticketID, String respuesta) {
+    File inputFile = new File("tickets/tickets.txt");
+    File tempFile = new File("tickets/temp.txt");
+
+    try (
+        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))
+    ) {
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+            String[] partes = linea.split(",");
+
+            if (partes[0].equals(ticketID)) {
+                // Ticket encontrado → actualizar
+                partes[6] = "RESPONDIDO: " + respuesta;
+                linea = String.join(",", partes);
+            }
+
+            bw.write(linea);
+            bw.newLine();
+        }
+
+        // reemplazar archivo original
+        inputFile.delete();
+        tempFile.renameTo(inputFile);
+
+        System.out.println("El ticket " + ticketID + " ha sido marcado como respondido.");
+
+    } catch (IOException e) {
+        System.out.println("Error al responder el ticket.");
+    }
+}
+
 }
