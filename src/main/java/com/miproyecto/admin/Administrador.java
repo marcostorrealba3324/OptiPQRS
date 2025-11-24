@@ -26,7 +26,8 @@ public class Administrador {
         System.out.println("\n===== MENÚ ADMINISTRADOR =====");
         System.out.println("1. Ver todos los tickets");
         System.out.println("2. Eliminar los tickets");
-        System.out.println("3. Salir del menú de administrador");
+        System.out.println("3. Responder los tickets");
+        System.out.println("4. Salir del menú de administrador");
         System.out.print("Seleccione una opción: ");
         
         try {
@@ -44,12 +45,22 @@ public class Administrador {
                 GestionTickets.eliminarTickets();
                 break;
             case 3:
+                System.out.print("Ingrese el ID del ticket a responder: ");
+                String id = sc.nextLine();
+                
+                System.out.print("Escriba la respuesta para este ticket: ");
+                String respuesta = "Ya se generó respuesta a su correo";
+                GestionTickets.responderTicket(id, respuesta);
+                break;
+                
+            case 4:
                 System.out.println("Saliendo del menú de administrador...");
                 break;
+                
             default:
                 System.out.println("Opción inválida. Por favor, seleccione 1, 2 o 3.");
         }
 
-    } while (opcion != 3);
+    } while (opcion != 4);
     }
 }
