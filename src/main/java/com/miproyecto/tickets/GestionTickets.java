@@ -6,18 +6,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import usuarios.GuardarUsuarios;
 
-// Clase encargada de manejar los tickets y los contadores individuales
 public class GestionTickets {
 
-    // --- Generar un nuevo ticket ---
+
     public static void generarTicket(Map<String, String> usuarios, String cedula, int tipo, String descripcion) {
 
-        // Variables base
+
         String tipoTexto = "";
         String prefijo = "";
         String archivoContador = "";
 
-        // Asignar valores según el tipo de PQRS
+
         if (tipo == 1) {
             tipoTexto = "Petición";
             prefijo = "P-";
@@ -36,26 +35,26 @@ public class GestionTickets {
             archivoContador = "contador_S.txt";
         }
 
-        // Cargar contador correspondiente
+
         int contador = cargarContador(archivoContador);
 
-        // Crear código del ticket (ej: P-0001)
+
         String ticketID = prefijo + String.format("%04d", contador);
 
-        // Incrementar y guardar nuevo valor
+
         contador++;
         guardarContador(archivoContador, contador);
 
-        // Obtener nombre y apellido del usuario
+
         String datos = usuarios.get(cedula);
         String[] partes = datos.split(",");
         String nombre = partes[0];
         String apellido = partes.length > 1 ? partes[1] : "";
 
-        // Obtener la fecha actual
+
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
-        // Mostrar ticket generado
+
         System.out.println("\n===== TICKET GENERADO =====");
         System.out.println("Número de ticket: " + ticketID);
         System.out.println("Fecha: " + fecha);
@@ -64,11 +63,13 @@ public class GestionTickets {
         System.out.println("Descripción: " + descripcion);
         System.out.println("============================\n");
 
-        // Guardar ticket en archivo
+        System.out.println("En 15 días hábiles se le estará respondiendo a su solicitud.\n");
+
+
         guardarTicket(ticketID, cedula, nombre + " " + apellido, tipoTexto, descripcion, fecha);
     }
 
-    // --- Guardar ticket ---
+
     public static void guardarTicket(String id, String cedula, String nombre, String tipo, String descripcion, String fecha) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("tickets/tickets.txt", true))) {
             bw.write(id + "," + cedula + "," + nombre + "," + tipo + "," + descripcion + "," + fecha);
@@ -78,7 +79,7 @@ public class GestionTickets {
         }
     }
 
-    // --- Guardar contador ---
+
     public static void guardarContador(String archivo, int contador) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("tickets/" +archivo))) {
             bw.write(String.valueOf(contador));
@@ -87,7 +88,7 @@ public class GestionTickets {
         }
     }
 
-    // --- Cargar contador ---
+
     public static int cargarContador(String archivo) {
         int contador = 1;
         try (BufferedReader br = new BufferedReader(new FileReader("tickets/" + archivo))) {
@@ -123,7 +124,7 @@ public static void mostrarTodosLosTickets() {
         System.out.println("Error al leer los tickets.");
     }
 }
-    // --- Eliminar todos los tickets ---
+
     public static void eliminarTickets() {
         File archivo = new File("tickets/tickets.txt");
         if (archivo.delete()) {
